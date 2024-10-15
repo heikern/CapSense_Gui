@@ -1,24 +1,26 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import MapView from './components/MapView';
+import SideBar from './components/SideBar';
+import BottomBar from './components/BottomBar';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="h-screen flex flex-col">
+      {/* Main Content */}
+      <div className="flex flex-1">
+        {/* Map View */}
+        <div className="flex-grow">
+          <MapView />
+        </div>
+        {/* Side Bar */}
+        <div className="w-1/4">
+          <SideBar />
+        </div>
+      </div>
+      {/* Bottom Bar */}
+      <div className="h-40">
+        <BottomBar />
+      </div>
     </div>
   );
 }
