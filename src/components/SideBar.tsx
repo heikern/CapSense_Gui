@@ -2,11 +2,14 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { geojsonActions } from '../store/geojsonSlice';
 
+import PlotForm from './PlotForm';
+
+
 const SideBar: React.FC = () => {
   const dispatch = useDispatch();
 
-  const geojsonData = useSelector((state:any) => state.geojsonSlice.data)
   const fileName = useSelector((state:any) => state.geojsonSlice.fileName)
+  const singlePlotSelected: boolean = useSelector((state:any)=> state.appStateSlice.singlePlotSelected)
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -56,6 +59,7 @@ const SideBar: React.FC = () => {
   };
 
   return (
+    <>
     <div className="p-4 bg-blue-900 h-full">
       <h2 className="text-white text-lg font-semibold mb-4">Action Bar</h2>
 
@@ -67,8 +71,13 @@ const SideBar: React.FC = () => {
       />
 
       <h2 className="text-white">{fileName ? fileName: undefined}</h2>
-
+      <div className="mt-10">
+        {singlePlotSelected === true ? <PlotForm plotId='name' initPower={10} initYear={0} onClose={()=>{}}/> : undefined}
+      </div>
+      
     </div>
+    
+    </>
   );
 };
 

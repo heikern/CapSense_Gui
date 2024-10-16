@@ -18,7 +18,7 @@ function App() {
         </div>
       </div>
       {/* Bottom Bar */}
-      <div className="h-24">
+      <div className="h-8">
         <BottomBar />
       </div>
     </div>
