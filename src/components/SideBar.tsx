@@ -6,6 +6,7 @@ const SideBar: React.FC = () => {
   const dispatch = useDispatch();
 
   const geojsonData = useSelector((state:any) => state.geojsonSlice.data)
+  const fileName = useSelector((state:any) => state.geojsonSlice.fileName)
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -16,6 +17,7 @@ const SideBar: React.FC = () => {
     }
   
     console.log("File found:", file.name);
+    dispatch(geojsonActions.setFileName(file.name))
   
     try {
       // Use await to ensure the file is read completely
@@ -28,6 +30,7 @@ const SideBar: React.FC = () => {
       
       // Dispatch the action to store the GeoJSON data in Redux
       dispatch(geojsonActions.setGeojson(geojson));
+      console.log(geojson)
       
       console.log("GeoJSON data dispatched");
     } catch (error) {
@@ -63,13 +66,8 @@ const SideBar: React.FC = () => {
       onChange={handleFileUpload}
       />
 
-      <h2>{geojsonData ? "yay": "nay"}</h2>
+      <h2 className="text-white">{fileName ? fileName: undefined}</h2>
 
-      <ul className="text-white">
-        <li>Option 1</li>
-        <li>Option 2</li>
-        <li>Option 3</li>
-      </ul>
     </div>
   );
 };

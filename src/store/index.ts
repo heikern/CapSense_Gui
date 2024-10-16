@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import {geojsonReducer} from "./geojsonSlice"
+import { selectedPlotsSliceReducer } from "./selectedPlotsSlice";
 
 const store = configureStore({
     reducer: {
-        geojsonSlice: geojsonReducer
+        geojsonSlice: geojsonReducer,
+        selectedPlotsSlice: selectedPlotsSliceReducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
