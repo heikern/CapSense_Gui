@@ -13,6 +13,7 @@ const MapView: React.FC = () => {
   const dispatch = useDispatch()
 
   const plotClickedRef = useRef(false)
+  const selectedPlotIdRef = useRef<string | null> (null)
 
   const geojsonData = useSelector((state:any) => state.geojsonSlice.data)
   const selectedPlots = useSelector((state:any) => state.selectedPlotsSlice.selectedPlots)
@@ -22,6 +23,7 @@ const MapView: React.FC = () => {
       click: () => {
         if (!plotClickedRef.current){
           dispatch(appStateSliceActions.resetSinglePlotSelected())
+          dispatch(appStateSliceActions.setSelectedPlotId(null))
         }
         plotClickedRef.current = false;
       },
@@ -46,18 +48,31 @@ const MapView: React.FC = () => {
           stageYear: stageYear
         }
 
+        selectedPlotIdRef.current = plotId;
+        dispatch(appStateSliceActions.setSelectedPlotId(plotId))
         plotClickedRef.current = true;
         dispatch(appStateSliceActions.setSinglePlotSelected())
         dispatch(selectedPlotsSliceActions.addSelectedPlot(selectedPlot))
-        // console.log(centroid)
       }
     })
   }
 
   const style = (feature: any) => {
-    const isSelected = selectedPlots.some((f: any) => f.plotId === feature.properties.Name)
+    const plotId = feature.properties.Name
+    const isSelected = plotId === selectedPlotIdRef.current;
+    const isInSelectedPlots = selectedPlots.some((f: any) => f.plotId === feature.properties.Name)
+    let fillColor: string | null = null
+
+    if (isSelected){
+      fillColor = '#FF0000'
+    } else if (isInSelectedPlots && !isSelected){
+      fillColor = '#c77171'
+    } else {
+      fillColor = '#b3afaf'
+    }
+
     return {
-      fillColor: isSelected ? '#FF0000' : '#00FF00',
+      fillColor: fillColor,
       weight: 0.2,
       fillOpacity: 0.7
     }

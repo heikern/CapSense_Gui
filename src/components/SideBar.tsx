@@ -10,6 +10,7 @@ const SideBar: React.FC = () => {
 
   const fileName = useSelector((state:any) => state.geojsonSlice.fileName)
   const singlePlotSelected: boolean = useSelector((state:any)=> state.appStateSlice.singlePlotSelected)
+  const selectedPlotId: string | null = useSelector((state:any)=> state.appStateSlice.selectedPlotId)
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -72,7 +73,7 @@ const SideBar: React.FC = () => {
 
       <h2 className="text-white">{fileName ? fileName: undefined}</h2>
       <div className="mt-10">
-        {singlePlotSelected === true ? <PlotForm plotId='name' initPower={10} initYear={0} onClose={()=>{}}/> : undefined}
+        {selectedPlotId !== null  ? <PlotForm plotId={selectedPlotId} initPower={10} initYear={0} onClose={()=>{}}/> : undefined}
       </div>
       
     </div>
