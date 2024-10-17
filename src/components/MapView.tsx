@@ -77,8 +77,8 @@ const MapView: React.FC = () => {
       color = 'green'
       weight = 1.0
     } else {
-      weight = 0.01
-      color = 'red'
+      weight = 0.2
+      color = 'black'
     }
 
     return {
