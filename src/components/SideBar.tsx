@@ -3,14 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { geojsonActions } from '../store/geojsonSlice';
 
 import PlotForm from './PlotForm';
+import SelectedPlotList from './SelectedPlotList';
 
 
 const SideBar: React.FC = () => {
   const dispatch = useDispatch();
 
   const fileName = useSelector((state:any) => state.geojsonSlice.fileName)
-  const singlePlotSelected: boolean = useSelector((state:any)=> state.appStateSlice.singlePlotSelected)
-  const selectedPlotId: string | null = useSelector((state:any)=> state.appStateSlice.selectedPlotId)
+  // const singlePlotSelected: boolean = useSelector((state:any)=> state.appStateSlice.singlePlotSelected)
+  const currSelectedPlot = useSelector((state:any)=>state.selectedPlotsSlice.currSelectedPlot)
+  const selectedPlots = useSelector((state:any)=> state.selectedPlotsSlice.selectedPlots)
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -61,20 +63,26 @@ const SideBar: React.FC = () => {
 
   return (
     <>
-    <div className="p-4 bg-blue-900 h-full">
+    <div className="p-4 bg-blue-900 h-full flex flex-col">
       <h2 className="text-white text-lg font-semibold mb-4">Action Bar</h2>
-
+      <h2 className="text-white">{fileName ? fileName: "no file selected"}</h2>
       <input 
       type="file" 
       accept='.geojson' 
       className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       onChange={handleFileUpload}
       />
-
-      <h2 className="text-white">{fileName ? fileName: undefined}</h2>
-      <div className="mt-10">
-        {selectedPlotId !== null  ? <PlotForm plotId={selectedPlotId} initPower={10} initYear={0} onClose={()=>{}}/> : undefined}
+      <div className="mt-5 flex-grow">
+        {currSelectedPlot.plotId !== null  ? 
+          <PlotForm plotId={currSelectedPlot.plotId} 
+          initPower={currSelectedPlot.power} 
+          initYear={currSelectedPlot.stageYear}/> : undefined}
       </div>
+
+      <div className='mt-5 flex-grow max-h-96 overflow-auto'>
+        <SelectedPlotList plots = {selectedPlots}/>
+      </div>
+
       
     </div>
     

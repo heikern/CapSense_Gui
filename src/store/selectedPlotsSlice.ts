@@ -59,6 +59,7 @@ const selectedPlotsSlice = createSlice({
             if (existingSelectedPlot){
                 state.currSelectedPlot = existingSelectedPlot
             } else {
+                console.log("new plot")
                 state.currSelectedPlot = {
                     plotId: action.payload,
                     centroid: null,
@@ -70,6 +71,23 @@ const selectedPlotsSlice = createSlice({
         },
         setCurrSelectedPlot: (state, action: PayloadAction<selectedPlot>) => {
             state.currSelectedPlot = action.payload
+        },
+        setCurrSelectedPlotCentroid: (state, action: PayloadAction<number[]>)=>{
+            state.currSelectedPlot.centroid = action.payload
+        },
+        setCurrSelectedPlotPower: (state, action: PayloadAction<number>)=>{
+            state.currSelectedPlot.power = action.payload
+        },
+        setCurrSelectedPlotYear: (state, action: PayloadAction<number>)=>{
+            state.currSelectedPlot.stageYear = action.payload
+        },
+        resetCurrSelectedPlot: (state)=>{
+            state.currSelectedPlot = {
+                plotId: null,
+                centroid: null,
+                power: null,
+                stageYear: null
+            }
         }
     }
 })

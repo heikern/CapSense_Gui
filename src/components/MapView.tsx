@@ -16,14 +16,16 @@ const MapView: React.FC = () => {
   const selectedPlotIdRef = useRef<string | null> (null)
 
   const geojsonData = useSelector((state:any) => state.geojsonSlice.data)
+  const currSelectedPlot = useSelector((state:any) => state.selectedPlotsSlice.currSelectedPlot)
   const selectedPlots = useSelector((state:any) => state.selectedPlotsSlice.selectedPlots)
 
   const MapClickHandler = () => {
     useMapEvents({
       click: () => {
-        if (!plotClickedRef.current){
+        if (plotClickedRef.current == false){
           dispatch(appStateSliceActions.resetSinglePlotSelected())
-          dispatch(appStateSliceActions.setSelectedPlotId(null))
+          dispatch(selectedPlotsSliceActions.resetCurrSelectedPlot())
+          selectedPlotIdRef.current = null;
         }
         plotClickedRef.current = false;
       },
@@ -38,22 +40,12 @@ const MapView: React.FC = () => {
         const plotId = feature.properties.Name
         const centroid = turf.centroid(feature);
         const [longitude, latitude] = centroid.geometry.coordinates;
-        const power = 100
-        const stageYear = 100
-
-        const selectedPlot = {
-          plotId: plotId,
-          centroid: [longitude, latitude],
-          power: power,
-          stageYear: stageYear
-        }
 
         selectedPlotIdRef.current = plotId;
         dispatch(selectedPlotsSliceActions.getCurrSelectedPlot(plotId))
-        dispatch(appStateSliceActions.setSelectedPlotId(plotId))
+        dispatch(selectedPlotsSliceActions.setCurrSelectedPlotCentroid([longitude, latitude]))
         plotClickedRef.current = true;
         dispatch(appStateSliceActions.setSinglePlotSelected())
-        // dispatch(selectedPlotsSliceActions.addSelectedPlot(selectedPlot))
       }
     })
   }
@@ -63,18 +55,36 @@ const MapView: React.FC = () => {
     const isSelected = plotId === selectedPlotIdRef.current;
     const isInSelectedPlots = selectedPlots.some((f: any) => f.plotId === feature.properties.Name)
     let fillColor: string | null = null
+    let color: string | null = null
+    let weight: number | null = null
 
-    if (isSelected){
-      fillColor = '#FF0000'
-    } else if (isInSelectedPlots && !isSelected){
+    // if (isSelected && !isInSelectedPlots){
+    //   fillColor = '#FF0000'
+    // } else if (isInSelectedPlots){
+    //   fillColor = '#c77171'
+    // } else {
+    //   fillColor = '#b3afaf'
+    // }
+
+    if (isInSelectedPlots){
       fillColor = '#c77171'
     } else {
       fillColor = '#b3afaf'
     }
 
+
+    if (isSelected){
+      color = 'green'
+      weight = 1.0
+    } else {
+      weight = 0.01
+      color = 'red'
+    }
+
     return {
       fillColor: fillColor,
-      weight: 0.2,
+      color: color,
+      weight: weight,
       fillOpacity: 0.7
     }
   }
