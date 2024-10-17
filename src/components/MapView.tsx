@@ -49,10 +49,11 @@ const MapView: React.FC = () => {
         }
 
         selectedPlotIdRef.current = plotId;
+        dispatch(selectedPlotsSliceActions.getCurrSelectedPlot(plotId))
         dispatch(appStateSliceActions.setSelectedPlotId(plotId))
         plotClickedRef.current = true;
         dispatch(appStateSliceActions.setSinglePlotSelected())
-        dispatch(selectedPlotsSliceActions.addSelectedPlot(selectedPlot))
+        // dispatch(selectedPlotsSliceActions.addSelectedPlot(selectedPlot))
       }
     })
   }
