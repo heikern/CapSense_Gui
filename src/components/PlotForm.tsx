@@ -50,10 +50,10 @@ const PlotForm: React.FC<PlotFormProps> = ({ plotId, initPower, initYear}) => {
   }
 
   return (
-    <div className="p-4 bg-gray-200 rounded-lg">
-      <h3 className="text-lg font-semibold mb-2">Plot Id: {plotId}</h3>
+    <div className="p-2 bg-gray-800 rounded-lg shadow-md mb-2">
+      <h3 className="text-white text-sm font-semibold mb-2">Plot Id: {plotId}</h3>
 
-      <label className="block text-sm font-medium text-gray-700">Power:</label>
+      <label className="block text-sm font-medium text-white">Power:</label>
       <input
         type="text"
         value={power}
@@ -61,7 +61,7 @@ const PlotForm: React.FC<PlotFormProps> = ({ plotId, initPower, initYear}) => {
         className="border rounded px-2 py-1 mb-4 w-full"
       />
 
-      <label className="block text-sm font-medium text-gray-700">Year:</label>
+      <label className="block text-sm font-medium text-white">Year:</label>
       <input
         type="text"
         value={year}
@@ -69,7 +69,7 @@ const PlotForm: React.FC<PlotFormProps> = ({ plotId, initPower, initYear}) => {
         className="border rounded px-2 py-1 mb-4 w-full"
       />
 
-      <button onClick={handleAddLoad} className="bg-blue-500 text-white rounded px-4 py-2">
+      <button onClick={handleAddLoad} className="bg-blue-500 text-white rounded py-1 w-full">
         Add load
       </button>
     </div>

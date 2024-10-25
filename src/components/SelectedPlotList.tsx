@@ -25,12 +25,12 @@ const SelectedPlotList: React.FC<SelectedPlotListProps> = ({ plots }) => {
     return (
     <div className="mt-6">
         <h3 className="text-white text-md font-semibold mb-2">Selected Plots</h3>
-        <div className="max-h-64 overflow-y-auto">
+        <div className="max-h-70 overflow-y-auto">
         {plots
             .slice()
             .reverse()
             .map((plot, index) => (
-                    <div key={index} className="bg-gray-200 rounded-lg p-3 mb-2">
+                    <div key={index} className="bg-gray-200 rounded-lg p-0.5 mb-1">
                     <h4 className="text-sm font-medium">Plot Id: {plot.plotId ?? 'N/A'}</h4>
                     <p className="text-sm">Power: {plot.power ?? 'N/A'}</p>
                     <p className="text-sm">Year: {plot.stageYear ?? 'N/A'}</p>

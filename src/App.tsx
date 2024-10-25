@@ -1,7 +1,7 @@
 import React from 'react';
 import MapView from './components/MapView';
 import SideBar from './components/SideBar';
-import BottomBar from './components/BottomBar';
+// import BottomBar from './components/BottomBar';
 
 function App() {
   return (
@@ -17,10 +17,10 @@ function App() {
           <SideBar />
         </div>
       </div>
-      {/* Bottom Bar */}
+      {/* Bottom Bar
       <div className="h-8">
         <BottomBar />
-      </div>
+      </div> */}
     </div>
   );
 }
