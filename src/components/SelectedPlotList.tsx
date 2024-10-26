@@ -16,7 +16,6 @@ const SelectedPlotList: React.FC<SelectedPlotListProps> = ({ plots }) => {
     if (plots.length === 0){
         return (
             <div className="mt-6">
-              <h3 className="text-white text-md font-semibold mb-2">Selected Plots</h3>
               <p className="text-gray-400">No plots available.</p>
             </div>
           );
@@ -24,7 +23,6 @@ const SelectedPlotList: React.FC<SelectedPlotListProps> = ({ plots }) => {
 
     return (
     <div className="mt-6">
-        <h3 className="text-white text-md font-semibold mb-2">Selected Plots</h3>
         <div className="max-h-70 overflow-y-auto">
         {plots
             .slice()

@@ -48,8 +48,8 @@ const FileUpload: React.FC = () => {
   };
 
   return (
-    <div className="p-4 bg-gray-800 rounded-lg shadow-md mb-4">
-      <h3 className="text-white text-sm font-semibold mb-2">Upload GeoJSON File</h3>
+    <div className="p-2 bg-gray-800 rounded-lg shadow-md mb-0">
+      <h3 className="text-white text-sm font-semibold mb-1">Upload GeoJSON File</h3>
       <input 
         type="file" 
         accept=".geojson" 

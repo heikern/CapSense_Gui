@@ -1,15 +1,13 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit"
 
-// Define an interface for the results findings
-interface findings {
+interface finding {
     summary: string | null;
     details: string | null;
 }
 
-// Define an interface for the result
 interface result {
-    plotId: string | null;
-    findings: findings | null;
+    resultId: string | null;
+    finding: finding | null;
 }
 
 // Define the structure for results
@@ -18,24 +16,23 @@ interface resultsState {
     currResult: result;
 }
 
-// Initial state for the results slice
 const initialResultsState: resultsState = {
     results: [],
     currResult: {
-        plotId: null,
-        findings: null
+        resultId: null,
+        finding: null
     }
 };
 
 // Create the results slice
-const resultsSlice = createSlice({
+export const resultsSlice = createSlice({
     name: 'resultsSlice',
     initialState: initialResultsState,
     reducers: {
         // Action to add results for a specific plot
         addResult: (state, action: PayloadAction<result>) => {
             const existingResult = state.results.find(
-                (res) => res.plotId === action.payload.plotId
+                (res) => res.resultId === action.payload.resultId
             );
 
             if (!existingResult) {
@@ -47,29 +44,29 @@ const resultsSlice = createSlice({
         // Action to get current result based on plot ID
         getCurrResult: (state, action: PayloadAction<string>) => {
             const existingResult = state.results.find(
-                (res) => res.plotId === action.payload
+                (res) => res.resultId === action.payload
             );
 
             if (existingResult) {
                 state.currResult = existingResult;
             } else {
                 state.currResult = {
-                    plotId: action.payload,
-                    findings: null
+                    resultId: action.payload,
+                    finding: null
                 };
             }
         },
         // Action to set current result findings
-        setCurrResultFindings: (state, action: PayloadAction<findings>) => {
-            if (state.currResult.plotId) {
-                state.currResult.findings = action.payload;
+        setCurrResultFindings: (state, action: PayloadAction<finding>) => {
+            if (state.currResult.resultId) {
+                state.currResult.finding = action.payload;
             }
         },
         // Action to reset current result
         resetCurrResult: (state) => {
             state.currResult = {
-                plotId: null,
-                findings: null
+                resultId: null,
+                finding: null
             };
         }
     }
@@ -80,3 +77,5 @@ export const resultsSliceReducer = resultsSlice.reducer;
 
 // Export the results slice actions
 export const resultsSliceActions = resultsSlice.actions;
+
+
