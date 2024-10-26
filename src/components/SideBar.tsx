@@ -55,9 +55,8 @@ const SideBar: React.FC = () => {
         
         {/* Plots/Results List Area */}
         <h3 className="text-white text-md font-semibold mb-0">Selected Plots</h3>
-        <div className='mt-5 h-[80%] overflow-auto'>
+        <div className='mt-1 h-[80%] overflow-auto'>
           {activeTab === 'plots' ? <SelectedPlotList plots = {selectedPlots}/> : <ResultsList/>}
-          {/* <SelectedPlotList plots = {selectedPlots}/> */}
         </div>
 
       </div>

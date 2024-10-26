@@ -46,8 +46,16 @@ const PlotForm: React.FC<PlotFormProps> = ({ plotId, initPower, initYear}) => {
       setPower('');
       setYear('');
     }
-   
   }
+
+  const handleDeleteLoad = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    dispatch(selectedPlotsSliceActions.deleteSelectedPlot())
+    setPower('');
+    setYear('');
+  }
+
+  
 
   return (
     <div className="p-2 bg-gray-800 rounded-lg shadow-md mb-2">
@@ -69,8 +77,12 @@ const PlotForm: React.FC<PlotFormProps> = ({ plotId, initPower, initYear}) => {
         className="border rounded px-2 py-1 mb-4 w-full"
       />
 
-      <button onClick={handleAddLoad} className="bg-blue-500 text-white rounded py-1 w-full">
+      <button onClick={handleAddLoad} className="bg-blue-500 text-white rounded py-0.5 w-full mb-0.5">
         Add load
+      </button>
+
+      <button onClick={handleDeleteLoad} className="bg-red-500 text-white rounded py-0.5 w-full mb-0.5">
+        Delete Load
       </button>
     </div>
   );

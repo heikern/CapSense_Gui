@@ -17,7 +17,7 @@ const SimulateButton: React.FC = () => {
         // assign a unique ID
         const resultId = uuidv4();
 
-        const successProbability = 0.5;
+        const successProbability = 0.3;
         const success = Math.random() < successProbability;
 
         let details: string;

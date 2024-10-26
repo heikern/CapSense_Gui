@@ -23,7 +23,6 @@ const FileUpload: React.FC = () => {
       
       const geojson = JSON.parse(fileContent);
       dispatch(geojsonActions.setGeojson(geojson));
-      console.log(geojson);
       
       console.log("GeoJSON data dispatched");
     } catch (error) {

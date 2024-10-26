@@ -51,6 +51,24 @@ const selectedPlotsSlice = createSlice({
                 Object.assign(existingSelectedPlot, state.currSelectedPlot)
             }
         },
+        deleteSelectedPlot: (state)=>{
+
+            const index = state.selectedPlots.findIndex(
+                (plot) => plot.plotId === state.currSelectedPlot.plotId
+            );
+
+            if (index !== -1){
+                console.log("starting to delete")
+                state.selectedPlots.splice(index,1);
+                state.currSelectedPlot = {
+                    plotId: null,
+                    centroid: null,
+                    power: null,
+                    stageYear: null
+                }
+            }
+
+        },
         getCurrSelectedPlot: (state, action: PayloadAction<string>) => {
             const existingSelectedPlot = state.selectedPlots.find(
                 (plot) => plot.plotId === action.payload 
@@ -59,7 +77,6 @@ const selectedPlotsSlice = createSlice({
             if (existingSelectedPlot){
                 state.currSelectedPlot = existingSelectedPlot
             } else {
-                console.log("new plot")
                 state.currSelectedPlot = {
                     plotId: action.payload,
                     centroid: null,

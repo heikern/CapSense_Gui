@@ -1,5 +1,5 @@
-import React from 'react';
-import { useRef } from 'react';
+import React, { useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -18,6 +18,15 @@ const MapView: React.FC = () => {
   const geojsonData = useSelector((state:any) => state.geojsonSlice.data)
   const currSelectedPlot = useSelector((state:any) => state.selectedPlotsSlice.currSelectedPlot)
   const selectedPlots = useSelector((state:any) => state.selectedPlotsSlice.selectedPlots)
+
+  // State to force re-render
+  const [selectedPlotState, setSelectedPlotState] = useState(currSelectedPlot);
+  
+  useEffect(()=>{
+    selectedPlotIdRef.current = currSelectedPlot.plotId
+    // Update the local state to trigger a re-render
+    setSelectedPlotState(currSelectedPlot);
+  },[currSelectedPlot])
 
   const MapClickHandler = () => {
     useMapEvents({
@@ -58,20 +67,11 @@ const MapView: React.FC = () => {
     let color: string | null = null
     let weight: number | null = null
 
-    // if (isSelected && !isInSelectedPlots){
-    //   fillColor = '#FF0000'
-    // } else if (isInSelectedPlots){
-    //   fillColor = '#c77171'
-    // } else {
-    //   fillColor = '#b3afaf'
-    // }
-
     if (isInSelectedPlots){
       fillColor = '#c77171'
     } else {
       fillColor = '#b3afaf'
     }
-
 
     if (isSelected){
       color = 'green'
