@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
 
 
-interface selectedPlot {
+export interface selectedPlot {
     plotId: string | null;
     centroid: number[] | null;
     power: number | null;
@@ -58,7 +58,6 @@ const selectedPlotsSlice = createSlice({
             );
 
             if (index !== -1){
-                console.log("starting to delete")
                 state.selectedPlots.splice(index,1);
                 state.currSelectedPlot = {
                     plotId: null,
