@@ -1,110 +1,86 @@
-import React, { useEffect } from 'react';
-import { useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-
-import * as turf from '@turf/turf'
-
-import { selectedPlotsSliceActions } from '../store/selectedPlotsSlice';
-import {appStateSliceActions} from '../store/appStateSlice'
+// MapView.tsx
+import React, { useRef, useEffect } from 'react';
+import {useSelector, useDispatch} from 'react-redux'
+import 'ol/ol.css';
+import { Map, View } from 'ol';
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
+import { fromLonLat } from 'ol/proj';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import { GeoJSON } from 'ol/format';
+import {Style, Fill, Stroke} from 'ol/style';
+import { FeatureLike } from 'ol/Feature';
 
 const MapView: React.FC = () => {
-  const dispatch = useDispatch()
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstanceRef = useRef<Map | null>(null);
+  const geojsonLayerRef = useRef<VectorLayer<VectorSource> | null | undefined>(undefined)
 
-  const plotClickedRef = useRef(false)
-  const selectedPlotIdRef = useRef<string | null> (null)
+  const geojsonData = useSelector((state:any)=>state.geojsonSlice.data)
 
-  const geojsonData = useSelector((state:any) => state.geojsonSlice.data)
-  const currSelectedPlot = useSelector((state:any) => state.selectedPlotsSlice.currSelectedPlot)
-  const selectedPlots = useSelector((state:any) => state.selectedPlotsSlice.selectedPlots)
+  useEffect(() => {
+    if (!mapRef.current) return;
 
-  // State to force re-render
-  const [selectedPlotState, setSelectedPlotState] = useState(currSelectedPlot);
-  
-  useEffect(()=>{
-    selectedPlotIdRef.current = currSelectedPlot.plotId
-    // Update the local state to trigger a re-render
-    setSelectedPlotState(currSelectedPlot);
-  },[currSelectedPlot])
-
-  const MapClickHandler = () => {
-    useMapEvents({
-      click: () => {
-        if (plotClickedRef.current == false){
-          dispatch(appStateSliceActions.resetSinglePlotSelected())
-          dispatch(selectedPlotsSliceActions.resetCurrSelectedPlot())
-          selectedPlotIdRef.current = null;
-        }
-        plotClickedRef.current = false;
-      },
+    // Create a new map instance
+    mapInstanceRef.current = new Map({
+      target: mapRef.current,
+      layers: [
+        new TileLayer({
+          source: new OSM(),
+        }),
+      ],
+      view: new View({
+        center: fromLonLat([103.8198, 1.3521]), // Singapore coordinates
+        zoom: 12,
+      }),
     });
-    return null
-  }
+
+    // Initialize the vector layer for geojson data
+    geojsonLayerRef.current = new VectorLayer({
+        source: new VectorSource(),
+        style: (feature: FeatureLike) => {
+            return new Style({
+                fill: new Fill({
+                    color: 'rgba(128, 128, 128, 0.5)',
+                }),
+                stroke: new Stroke({
+                    color: 'rgba(0, 0, 0, 0)',
+                    width: 0,
+                })
+            })
+        }
+    });
+
+    // Add the geojson layer to the map
+    mapInstanceRef.current.addLayer(geojsonLayerRef.current);
 
 
-  const onEachFeature = (feature: any, layer: any) => {
-    layer.on({
-      click: () => {
-        const plotId = feature.properties.Name
-        const centroid = turf.centroid(feature);
-        const [longitude, latitude] = centroid.geometry.coordinates;
+    // Cleanup on unmount
+    return () => mapInstanceRef.current?.setTarget(undefined);
+  }, []);
 
-        selectedPlotIdRef.current = plotId;
-        dispatch(selectedPlotsSliceActions.getCurrSelectedPlot(plotId))
-        dispatch(selectedPlotsSliceActions.setCurrSelectedPlotCentroid([longitude, latitude]))
-        plotClickedRef.current = true;
-        dispatch(appStateSliceActions.setSinglePlotSelected())
-      }
-    })
-  }
+    // Effect to handle geojson data changes
+    useEffect(()=>{
+        if (!geojsonData || !geojsonLayerRef.current) return;
 
-  const style = (feature: any) => {
-    const plotId = feature.properties.Name
-    const isSelected = plotId === selectedPlotIdRef.current;
-    const isInSelectedPlots = selectedPlots.some((f: any) => f.plotId === feature.properties.Name)
-    let fillColor: string | null = null
-    let color: string | null = null
-    let weight: number | null = null
+        const vectorSource = geojsonLayerRef.current.getSource() as VectorSource;
 
-    if (isInSelectedPlots){
-      fillColor = '#c77171'
-    } else {
-      fillColor = '#b3afaf'
-    }
+        // Clear previous features
+        vectorSource.clear();
 
-    if (isSelected){
-      color = 'green'
-      weight = 1.0
-    } else {
-      weight = 0.2
-      color = 'black'
-    }
+        // Parse and add the new geojson features
+        const geojsonFormat = new GeoJSON();
+        const features = geojsonFormat.readFeatures(geojsonData, {
+            dataProjection: 'EPSG:4326', // Source projection (WGS 84)
+            featureProjection: 'EPSG:3857', // Target projection (Web Mercator)
+          });
 
-    return {
-      fillColor: fillColor,
-      color: color,
-      weight: weight,
-      fillOpacity: 0.7
-    }
-  }
+        vectorSource.addFeatures(features);
+    },[geojsonData])
 
-  return (
-    <div className="h-full w-full">
-      <MapContainer center={[1.3521, 103.8198]} zoom={13} className="h-full w-full">
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        <MapClickHandler/>
-        {geojsonData && <GeoJSON data={geojsonData} 
-        onEachFeature={onEachFeature} style={style}/>}
-      </MapContainer>
-    </div>
-  );
+
+  return <div ref={mapRef} style={{ width: '100%', height: '100vh' }} />;
 };
 
 export default MapView;
-
-
-
