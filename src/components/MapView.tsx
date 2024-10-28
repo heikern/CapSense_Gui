@@ -10,14 +10,13 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { GeoJSON } from 'ol/format';
 import {Style, Fill, Stroke} from 'ol/style';
-import { FeatureLike } from 'ol/Feature';
-import Feature from 'ol/Feature';
-// import { feature } from '@turf/turf';
-
-import { selectedPlot } from '../store/selectedPlotsSlice';
+// import { FeatureLike } from 'ol/Feature';
+// import Feature from 'ol/Feature';
+import { Feature } from 'ol';
 
 import { selectedPlotsSliceActions } from '../store/selectedPlotsSlice';
-import { feature } from '@turf/turf';
+import { isType } from 'ol/expr/expression';
+// import { FeatureLike } from 'ol/Feature';
 
 const MapView: React.FC = () => {
     const dispatch = useDispatch()
@@ -27,8 +26,10 @@ const MapView: React.FC = () => {
 
     const geojsonData = useSelector((state:any)=>state.geojsonSlice.data)
     const currSelectedPlot = useSelector((state:any)=>state.selectedPlotsSlice.currSelectedPlot)
+    const selectedPlots = useSelector((state:any)=>state.selectedPlotsSlice.selectedPlots )
 
     const currSelectedPlotIdRef = useRef(null)
+    const selectedPlotsLengthRef = useRef<number>(0)
 
     useEffect(()=>{
         // Clear the outline when currSelectedPlot gets cleared by external forces
@@ -44,12 +45,12 @@ const MapView: React.FC = () => {
         }
 
         if (currSelectedPlot.plotId !== null){
-            const newFeature = geojsonLayerRef.current?.getSource()?.getFeatureById(currSelectedPlot.plotId);
+            const newFeature = geojsonLayerRef.current?.getSource()?.getFeatureById(currSelectedPlot.plotId);       
 
             if (newFeature){
                 newFeature.setStyle(new Style({
                     fill: new Fill({
-                        color: 'rgba(128, 128, 128, 0.5)',
+                        color:'rgba(128, 128, 128, 0.5)'
                     }),
                     stroke: new Stroke({
                         color: 'rgba(0, 128, 0, 1)',
@@ -59,8 +60,27 @@ const MapView: React.FC = () => {
             }
         }
 
-        currSelectedPlotIdRef.current = currSelectedPlot.plotId
-    },[currSelectedPlot])
+        if (selectedPlots.length > selectedPlotsLengthRef.current){
+            if (currSelectedPlotIdRef.current !== null){
+                const myFeature = geojsonLayerRef.current?.getSource()?.getFeatureById(currSelectedPlotIdRef.current);
+                
+                myFeature?.setStyle(new Style({
+                    fill: new Fill ({
+                        color: 'rgba(255, 0, 0, 0.2)'
+                    }),
+                    stroke: new Stroke({
+                        color: 'rgba(0, 0, 0, 1)',
+                        width: 0.3,
+                    })
+                }))
+
+            }
+             
+            selectedPlotsLengthRef.current = selectedPlots.length
+        }
+
+        currSelectedPlotIdRef.current = currSelectedPlot.plotId 
+    },[currSelectedPlot, selectedPlots])
 
     useEffect(() => {
         if (!mapRef.current) return;
@@ -82,7 +102,7 @@ const MapView: React.FC = () => {
     // Initialize the vector layer for geojson data
     geojsonLayerRef.current = new VectorLayer({
         source: new VectorSource(),
-        style: (feature: FeatureLike) => {
+        style: (feature) => {
             return new Style({
                 fill: new Fill({
                     color:'rgba(128, 128, 128, 0.5)'
@@ -125,33 +145,10 @@ const MapView: React.FC = () => {
             // Dispatch action to set the current selected plot
             dispatch(selectedPlotsSliceActions.getCurrSelectedPlot(currPlotId));
 
-            // Set the style for the selected feature
-            feature?.setStyle(new Style({
-                fill: new Fill({
-                    color: 'rgba(128, 128, 128, 0.5)',
-                }),
-                stroke: new Stroke({
-                    color: 'rgba(0, 128, 0, 1)',
-                    width: 2,
-                })
-            }))
         } else {
             // Dispatch action to reset the current selected plot
             dispatch(selectedPlotsSliceActions.resetCurrSelectedPlot());
-        }
-
-        // // clear the previous plotId
-        // if (currSelectedPlotIdRef.current || !(feature instanceof Feature)){
-        //     const prevPlotId = currSelectedPlotIdRef.current
-
-        //     if (prevPlotId && (prevPlotId !== currPlotId)){
-        //         const previousFeature = geojsonLayerRef.current?.getSource()?.getFeatureById(prevPlotId);
-        //         if (previousFeature){
-        //             previousFeature.setStyle(geojsonLayerRef.current?.getStyle() as any)
-        //         }
-        //     }
-        // }
-        
+        }        
         
     });
 
