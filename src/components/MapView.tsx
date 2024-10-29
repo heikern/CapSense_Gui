@@ -10,13 +10,10 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { GeoJSON } from 'ol/format';
 import {Style, Fill, Stroke} from 'ol/style';
-// import { FeatureLike } from 'ol/Feature';
-// import Feature from 'ol/Feature';
 import { Feature } from 'ol';
 
 import { selectedPlotsSliceActions } from '../store/selectedPlotsSlice';
-import { isType } from 'ol/expr/expression';
-// import { FeatureLike } from 'ol/Feature';
+
 
 const MapView: React.FC = () => {
     const dispatch = useDispatch()
@@ -31,6 +28,16 @@ const MapView: React.FC = () => {
     const currSelectedPlotIdRef = useRef(null)
     const selectedPlotsLengthRef = useRef<number>(0)
 
+    // set default style as a ref 
+    const defaultFill = useRef(new Fill({
+        color: 'rgba(128, 128, 128, 0.5)',
+    }))
+
+    const defaultStroke = useRef(new Stroke({
+        color: 'rgba(0, 0, 0, 1)',
+        width: 0.3,
+    }))
+
     useEffect(()=>{
         // Clear the outline when currSelectedPlot gets cleared by external forces
         // Also an an outline when currSelectedPlot gets set by external forces
@@ -38,40 +45,46 @@ const MapView: React.FC = () => {
             if (currSelectedPlot.plotId !== currSelectedPlotIdRef.current){
                 // delete the old feature
                 const feature = geojsonLayerRef.current?.getSource()?.getFeatureById(currSelectedPlotIdRef.current);
-                if (feature){
-                    feature.setStyle(geojsonLayerRef.current?.getStyle() as any)
+                const featureStyle = feature?.getStyle() as Style
+                const existingFeatureFill = featureStyle?.getFill()
+
+                if (feature && existingFeatureFill){
+                    feature.setStyle(new Style({
+                        fill: existingFeatureFill,
+                        stroke: defaultStroke.current,
+                    }))
                 }
             }
         }
 
         if (currSelectedPlot.plotId !== null){
-            const newFeature = geojsonLayerRef.current?.getSource()?.getFeatureById(currSelectedPlot.plotId);       
+            // add a stroke when selected
+            const newFeature = geojsonLayerRef.current?.getSource()?.getFeatureById(currSelectedPlot.plotId);
+            
+            const featureStyle = newFeature?.getStyle() as Style
+            const existingFeatureFill = featureStyle?.getFill()
 
-            if (newFeature){
+            if (newFeature && existingFeatureFill){
                 newFeature.setStyle(new Style({
-                    fill: new Fill({
-                        color:'rgba(128, 128, 128, 0.5)'
-                    }),
+                    fill: existingFeatureFill,
                     stroke: new Stroke({
                         color: 'rgba(0, 128, 0, 1)',
                         width: 2,
                     })
                 }))
             }
+
         }
 
         if (selectedPlots.length > selectedPlotsLengthRef.current){
             if (currSelectedPlotIdRef.current !== null){
                 const myFeature = geojsonLayerRef.current?.getSource()?.getFeatureById(currSelectedPlotIdRef.current);
-                
+
                 myFeature?.setStyle(new Style({
-                    fill: new Fill ({
-                        color: 'rgba(255, 0, 0, 0.2)'
+                    fill: new Fill({
+                        color:'rgba(255, 0, 0, 0.3)'
                     }),
-                    stroke: new Stroke({
-                        color: 'rgba(0, 0, 0, 1)',
-                        width: 0.3,
-                    })
+                    stroke: defaultStroke.current
                 }))
 
             }
@@ -102,17 +115,6 @@ const MapView: React.FC = () => {
     // Initialize the vector layer for geojson data
     geojsonLayerRef.current = new VectorLayer({
         source: new VectorSource(),
-        style: (feature) => {
-            return new Style({
-                fill: new Fill({
-                    color:'rgba(128, 128, 128, 0.5)'
-                }),
-                stroke: new Stroke({
-                    color: 'rgba(0, 0, 0, 1)',
-                    width: 0.3,
-                })
-            })
-        }
     });
 
     // Add the geojson layer to the map
@@ -173,8 +175,17 @@ const MapView: React.FC = () => {
             featureProjection: 'EPSG:3857', // Target projection (Web Mercator)
           });
 
+        // Function to style each feature
+        const defaultStyleFeature = () => {
+            return new Style({
+                fill: defaultFill.current,
+                stroke: defaultStroke.current,
+            });
+        };
+
         // Set the feature ID to Name
         features.forEach((feature)=>{
+            feature.setStyle(defaultStyleFeature())
             feature.setId(feature?.getProperties().Name)
         })
 
