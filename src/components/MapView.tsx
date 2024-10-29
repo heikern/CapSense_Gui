@@ -76,6 +76,7 @@ const MapView: React.FC = () => {
 
         }
 
+        // set plot to red when added to selected plot
         if (selectedPlots.length > selectedPlotsLengthRef.current){
             if (currSelectedPlotIdRef.current !== null){
                 const myFeature = geojsonLayerRef.current?.getSource()?.getFeatureById(currSelectedPlotIdRef.current);
@@ -89,6 +90,18 @@ const MapView: React.FC = () => {
 
             }
              
+            selectedPlotsLengthRef.current = selectedPlots.length
+        }
+
+        if (selectedPlots.length < selectedPlotsLengthRef.current){
+            if (currSelectedPlotIdRef.current !== null){
+                const myFeature = geojsonLayerRef.current?.getSource()?.getFeatureById(currSelectedPlotIdRef.current);
+
+                myFeature?.setStyle(new Style({
+                    fill: defaultFill.current,
+                    stroke: defaultStroke.current
+                }))
+            }
             selectedPlotsLengthRef.current = selectedPlots.length
         }
 
