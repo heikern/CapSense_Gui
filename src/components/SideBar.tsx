@@ -22,12 +22,12 @@ const SideBar: React.FC = () => {
 
   return (
     <>
-    <div className="p-3 bg-blue-900 h-full flex flex-col">
+    <div className="p-3 bg-blue-900 h-full flex flex-col overflow-y-hidden">
       <h2 className="text-white text-lg font-semibold mb-1">Action Bar</h2>
       <FileUpload/>
 
       {/* CurrSelectedPlot Area */}
-      <div className="mt-5 h-[40%]">
+      <div className="mt-5 h-[40%]" style = {{visibility: currSelectedPlot.plotId? 'visible': 'hidden'}}>
         {currSelectedPlot.plotId !== null  ? 
           <PlotForm plotId={currSelectedPlot.plotId} 
           initPower={currSelectedPlot.power} 
@@ -36,7 +36,7 @@ const SideBar: React.FC = () => {
 
 
       {/* Tab Menu + plots / sim results */}
-      <div className='h-[50%]'>
+      <div className='h-[40%]'>
         {/* Tab Menu */}
         <div className="mt-4 mb-2 flex items-center">
           <button
@@ -55,7 +55,7 @@ const SideBar: React.FC = () => {
         
         {/* Plots/Results List Area */}
         <h3 className="text-white text-md font-semibold mb-0">Selected Plots</h3>
-        <div className='mt-1 h-[80%] overflow-auto'>
+        <div className='mt-1 h-[70%] overflow-auto'>
           {activeTab === 'plots' ? <SelectedPlotList plots = {selectedPlots}/> : <ResultsList/>}
         </div>
 
