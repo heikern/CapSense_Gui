@@ -5,6 +5,7 @@ import 'ol/ol.css';
 import {  Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
+// import XYZ from 'ol/source/XYZ';
 import { fromLonLat } from 'ol/proj';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -118,6 +119,11 @@ const MapView: React.FC = () => {
             new TileLayer({
             source: new OSM(),
             }),
+            // new TileLayer({
+            //     source: new XYZ({
+            //       url: 'https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', // Stamen Toner Lite tiles
+            //     }),
+            //   }),
         ],
         view: new View({
             center: fromLonLat([103.8198, 1.3521]), // Singapore coordinates
