@@ -13,6 +13,17 @@ import {Style, Fill, Stroke} from 'ol/style';
 import { Feature } from 'ol';
 
 import { selectedPlotsSliceActions } from '../store/selectedPlotsSlice';
+import { Geometry } from 'ol/geom';
+
+const getCentroid = (geometry: Geometry | undefined): [number, number] | null => {
+    if (!geometry) return null;
+
+    const extent = geometry.getExtent();
+    const centerX = (extent[0] + extent[2]) / 2;
+    const centerY = (extent[1] + extent[3]) / 2;
+
+    return [centerX, centerY]
+}
 
 
 const MapView: React.FC = () => {
@@ -40,7 +51,7 @@ const MapView: React.FC = () => {
 
     useEffect(()=>{
         // Clear the outline when currSelectedPlot gets cleared by external forces
-        // Also an an outline when currSelectedPlot gets set by external forces
+        // Also add an outline when currSelectedPlot gets set by external components
         if (currSelectedPlotIdRef.current !== null){
             if (currSelectedPlot.plotId !== currSelectedPlotIdRef.current){
                 // delete the old feature
@@ -159,6 +170,13 @@ const MapView: React.FC = () => {
 
             // Dispatch action to set the current selected plot
             dispatch(selectedPlotsSliceActions.getCurrSelectedPlot(currPlotId));
+
+            // Dispatch action to set the plot centroid for the selected plot
+            const centroid = getCentroid(feature.getGeometry());
+            if (centroid !== null) {
+                dispatch(selectedPlotsSliceActions.setCurrSelectedPlotCentroid(centroid))
+            }
+            
 
         } else {
             // Dispatch action to reset the current selected plot
