@@ -6,6 +6,7 @@ import FileUpload from './FileUpload';
 import PlotForm from './PlotForm';
 import SelectedPlotList from './SelectedPlotList';
 import SimulateButton from './SimulateButton';
+import SimulateButtonWeb from './SimulateButtonWeb';
 import ResultsList from './ResultsList'
 
 
@@ -63,7 +64,8 @@ const SideBar: React.FC = () => {
 
       {/* Simulate Button */}
       <div className="mt-5 h-[10%]">
-        <SimulateButton/>
+        {/* <SimulateButton/> */}
+        <SimulateButtonWeb/>
       </div>
 
       
