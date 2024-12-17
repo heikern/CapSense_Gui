@@ -9,6 +9,7 @@ const SimulateButtonWeb: React.FC = () => {
 
     const dispatch = useDispatch()
     const tasks = useSelector((state:any)=> state.tasksSlice.tasks)
+    const selectedPlots = useSelector((state: any)=> state.selectedPlotsSlice.selectedPlots)
     // const selectedPlots = useSelector((state: any) => state.selectedPlotsSlice.selectedPlots)
     // const results = useSelector((state: any) => state.resultsSlice.results)
 
@@ -16,7 +17,7 @@ const SimulateButtonWeb: React.FC = () => {
     const handleAddTask = () => {
       // const taskId = Date.now().toString();
       const taskId = uuidv4();
-      const taskData = `Task-${taskId}`;
+      const taskData = selectedPlots;
 
       dispatch(addTask({id: taskId, data: taskData}))
       dispatch({
@@ -33,15 +34,12 @@ const SimulateButtonWeb: React.FC = () => {
 
   return (
     <div>
-      <button onClick={handleAddTask}>Add Task</button>
-      <ul>
-        {tasks.map((task: any) => (
-          <li key={task.id}>
-            {/* {task.data} - {task.status} {task.result && `: ${task.result}`} */}
-            {task.data} - {task.status}
-          </li>
-        ))}
-      </ul>
+      <button 
+        onClick={handleAddTask}
+        className="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+      >
+        Add Task
+      </button>
     </div>
   );
 };

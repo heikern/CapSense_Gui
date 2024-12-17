@@ -8,6 +8,7 @@ import SelectedPlotList from './SelectedPlotList';
 import SimulateButton from './SimulateButton';
 import SimulateButtonWeb from './SimulateButtonWeb';
 import ResultsList from './ResultsList'
+import TaskQueue from './simulationQueue';
 
 
 const SideBar: React.FC = () => {
@@ -19,7 +20,7 @@ const SideBar: React.FC = () => {
   const selectedPlots = useSelector((state:any)=> state.selectedPlotsSlice.selectedPlots)
 
   // State to track the active tab
-  const [activeTab, setActiveTab] = useState<'plots' | 'results'>('plots');
+  const [activeTab, setActiveTab] = useState<'plots' | 'results' | 'taskQueue'>('plots');
 
   return (
     <>
@@ -47,6 +48,12 @@ const SideBar: React.FC = () => {
               Selected Plots
             </button>
             <button
+              className={`px-2 mr-1 py-1 ${activeTab === 'taskQueue' ? 'bg-gray-800 text-white' : 'bg-white text-gray-300'}`}
+              onClick={() => setActiveTab('taskQueue')}
+            >
+              Task Queue
+            </button>
+            <button
               className={`px-2 py-1 ${activeTab === 'results' ? 'bg-gray-800 text-white' : 'bg-white text-gray-300'}`}
               onClick={() => setActiveTab('results')}
             >
@@ -55,9 +62,10 @@ const SideBar: React.FC = () => {
         </div>
         
         {/* Plots/Results List Area */}
-        <h3 className="text-white text-md font-semibold mb-0">Selected Plots</h3>
         <div className='mt-1 h-[70%] overflow-auto'>
-          {activeTab === 'plots' ? <SelectedPlotList plots = {selectedPlots}/> : <ResultsList/>}
+          {activeTab === 'plots' && <SelectedPlotList plots = {selectedPlots}/>}
+          {activeTab === 'taskQueue' && <TaskQueue/>}
+          {activeTab === 'results' && <ResultsList/>}
         </div>
 
       </div>

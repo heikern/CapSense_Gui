@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { selectedPlotsSliceActions } from '../store/selectedPlotsSlice';
 
-interface SelectedPlot {
+export interface SelectedPlot {
   plotId: string | null;
   centroid: number[] | null;
   power: number | null;

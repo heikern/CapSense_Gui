@@ -15,6 +15,8 @@ server.on('connection', (ws) => {
 
     if (task.type === 'submit-task') {
       console.log(`Received task from ${clientId}:`, task.payload);
+      // task.payload.Map((oneTask)=>(console.log(oneTask.data.centroid)))
+      task.payload.data.map((oneTask)=>(console.log(oneTask.centroid)))
 
       // Add task to the queue with client ID
       taskQueue.push({ clientId, taskId: task.payload.id, payload: task.payload });
