@@ -1,5 +1,5 @@
  import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
+ 
 interface GeojsonState {
     fileName: string | null;
     data: any | null;
